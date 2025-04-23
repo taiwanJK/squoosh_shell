@@ -33,7 +33,7 @@ try {
 if (-not (Get-Command squoosh-cli -ErrorAction SilentlyContinue)) {
     Write-Host "squoosh-cli 未安裝" -ForegroundColor Red
     Write-Host "安裝 squoosh-cli..." -ForegroundColor Yellow
-    npm install -g squoosh-cli | Write-Host 
+    npm install -g @squoosh/cli | Write-Host 
 } else {
     Write-Host "squoosh-cli 已安裝" -ForegroundColor Green
 }
