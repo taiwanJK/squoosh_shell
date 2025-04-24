@@ -6,6 +6,15 @@ if (-not (Get-Command nvm -ErrorAction SilentlyContinue)) {
     Write-Host "nvm-windows 已安裝" -ForegroundColor Green
 }
 
+# 保存初始 Node.js 版本
+$initialNodeVersion = $null
+try {
+    $initialNodeVersion = node -v
+    Write-Host "初始 Node.js 版本：$initialNodeVersion" -ForegroundColor Cyan
+} catch {
+    Write-Host "未檢測到初始 Node.js 版本" -ForegroundColor Yellow
+}
+
 # 2. 取得並解析 Node.js 版本
 try {
     $currentVersion = node -v
@@ -116,7 +125,21 @@ Write-Host "壓縮方式：$choice"
 Write-Host "壓縮品質：$quality"
 Write-Host "處理檔案數量：$($filesToProcess.Count)"
 
-# 9. 按任意鍵退出
+# 9. 恢復初始 Node.js 版本
+if ($initialNodeVersion -and $initialNodeVersion -ne (node -v)) {
+    Write-Host ""
+    Write-Host "正在恢復初始 Node.js 版本: $initialNodeVersion..." -ForegroundColor Cyan
+    
+    if ($initialNodeVersion -match "^v(\d+\.\d+\.\d+)$") {
+        $versionToRestore = $matches[1]
+        nvm use $versionToRestore | Write-Host
+        Write-Host "已恢復至初始 Node.js 版本: $(node -v)" -ForegroundColor Green
+    } else {
+        Write-Host "無法解析初始版本格式，無法恢復" -ForegroundColor Red
+    }
+}
+
+# 10. 按任意鍵退出
 Write-Host ""
 Write-Host "按任意鍵退出..." -ForegroundColor Cyan
 $null = $Host.UI.RawUI.ReadKey(
